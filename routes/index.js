@@ -48,14 +48,22 @@ module.exports = io => {
   router.post('/tweets', (req, res, next) => {
     var username = req.body.name;
     var content = req.body.text;
+    var tempid;
 
-    if(client.query('SELECT name FROM users WHERE users.name=$1', [username], function (err, result) {
-    if (err) console.log('Hi');
-    
-    
-    //io.sockets.emit('new_tweet', newTweet);
-    res.redirect('/');
-  }));
+    client.query('SELECT * FROM users WHERE users.name=$1', [username], function (err, result) {
+    if (result.rowCount === 0) {
+      client.query('INSERT INTO users (name) VALUES ($1)', [username]);
+      let temp = client.query('SELECT id, name FROM users WHERE users.name =$1', [username]);
+      temp.on('row', function(row) {
+        tempid = row.id;
+        console.log(tempid);
+        client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [tempid, content.toString()]);
+        res.redirect('/');
+      });
+    } else {
+
+    }
+    });
   });
 
   // // replaced this hard-coded route with general static routing in app.js
