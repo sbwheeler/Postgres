@@ -46,9 +46,16 @@ module.exports = io => {
 
   // create a new tweet
   router.post('/tweets', (req, res, next) => {
-    const newTweet = tweetBank.add(req.body.name, req.body.text);
-    io.sockets.emit('new_tweet', newTweet);
+    var username = req.body.name;
+    var content = req.body.text;
+
+    if(client.query('SELECT name FROM users WHERE users.name=$1', [username], function (err, result) {
+    if (err) console.log('Hi');
+    
+    
+    //io.sockets.emit('new_tweet', newTweet);
     res.redirect('/');
+  }));
   });
 
   // // replaced this hard-coded route with general static routing in app.js
