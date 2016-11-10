@@ -1,4 +1,6 @@
 'use strict';
+/*jshint esversion: 6 */
+
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
@@ -9,6 +11,7 @@ const path = require('path');
 const mime = require('mime');
 const bodyParser = require('body-parser');
 const socketio = require('socket.io');
+
 
 // templating boilerplate setup
 app.engine('html', nunjucks.render); // how to render html templates
@@ -28,6 +31,7 @@ const server = app.listen(1337, () => console.log('listening on port 1337'));
 const io = socketio.listen(server);
 
 app.use(express.static(path.join(__dirname, '/public')));
+
 
 // modular routing that uses io inside it
 app.use('/', makesRouter(io));
